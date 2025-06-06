@@ -185,3 +185,109 @@ docker ps
 docker exec -it php_fpm sh
 docker exec -it nginx sh
 ```
+
+## SSL certifikat
+
+vytvorenie a umiesnenie certifikatu
+
+```
+sudo apt install certbot
+
+sudo certbot certonly --standalone \
+  --agree-tos \
+  --no-eff-email \
+  --email info@example.com \
+  -d example.com
+
+mkdir -p ~/docker/certs
+
+sudo cp /etc/letsencrypt/live/example.com/fullchain.pem ~/docker/certs/fullchain.pem &&
+sudo cp /etc/letsencrypt/live/example.com/privkey.pem ~/docker/certs/privkey.pem
+```
+
+nastavenie `nginx` SSL s presmerovanim
+
+```
+mkdir -p ~/docker/nginx
+
+cat << 'EOF' > ~/docker/nginx/default.conf
+server {
+    listen 443 ssl;
+    server_name example.com;
+    root /var/www/html/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
+
+    ssl_certificate /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass php:9000;
+		fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+
+server {
+    listen 80;
+    server_name example.com;
+
+    return 301 https://$host$request_uri;
+}
+EOF
+```
+
+nastavenie `docker-compose.yml` SSL
+
+```
+cat << 'EOF' > ~/docker/docker-compose.yml
+services:
+  php:
+    image: php:8.3-fpm
+    container_name: php_fpm
+    restart: unless-stopped
+    volumes:
+      - ./src:/var/www/html
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - php
+EOF
+```
+
+testy certifikatu
+
+```
+openssl x509 -in ~/docker/certs/fullchain.pem -text -noout
+curl -vk https://example.com
+docker exec -it nginx ls -l /etc/nginx/certs
+```
