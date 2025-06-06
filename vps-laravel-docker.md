@@ -291,3 +291,97 @@ openssl x509 -in ~/docker/certs/fullchain.pem -text -noout
 curl -vk https://example.com
 docker exec -it nginx ls -l /etc/nginx/certs
 ```
+
+## MYSQL
+
+vytvorenie `.env`
+
+```
+cat << 'EOF' > ~/docker/.env.example2
+DB_ROOT_PASSWORD=rootpassword
+DB_DATABASE=database
+DB_USERNAME=username
+DB_PASSWORD=password
+EOF
+
+cp ~/docker/.env.example ~/docker/.env
+```
+
+vytvorenie `Dockerfile`
+
+```
+cat << 'EOF' > ~/docker/Dockerfile
+FROM php:8.3-fpm
+
+RUN apt-get update && apt-get install -y \
+    default-mysql-client \
+    && docker-php-ext-install pdo_mysql
+EOF
+```
+
+vytvorenie `docker-compose.yml`
+
+```
+cat << 'EOF' > ~/docker/docker-compose.yml
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_fpm
+    restart: unless-stopped
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./database:/var/lib/mysql
+EOF
+```
+
+vytvorenie testovacieho `index.php`
+
+```
+cat << 'EOF' > ~/project/server/public/index.php
+<?php
+
+$host = 'mysql';
+$db   = 'database';
+$user = 'username';
+$pass = 'password';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+
+try {
+    $pdo = new PDO($dsn, $user, $pass);
+    echo 'Spojenie s databázou je OK.';
+    $pdo = null;
+} catch (PDOException $e) {
+    echo 'Chyba spojenia: ' . $e->getMessage();
+}
+EOF
+```
