@@ -46,6 +46,8 @@ instalacia
 
 ```
 sudo apt install php-fpm php-cli -y
+
+sudo apt install -y php8.3-common php8.3-mysql php8.3-zip php8.3-gd php8.3-mbstring php8.3-curl php8.3-xml php8.3-bcmath php8.3-tokenizer php8.3-sqlite3
 ```
 
 ### Composer
@@ -146,7 +148,7 @@ Typ: CNAME
 Hodnota: example.com
 ```
 
-## testovaci projekt
+### testovaci projekt
 
 symlink ku projektu
 
@@ -244,7 +246,7 @@ docker exec -it php_fpm sh
 docker exec -it nginx sh
 ```
 
-## SSL certifikat
+### SSL certifikat
 
 vytvorenie a umiesnenie certifikatu
 
@@ -350,7 +352,7 @@ curl -vk https://example.com
 docker exec -it nginx ls -l /etc/nginx/certs
 ```
 
-## MYSQL
+### MYSQL
 
 vytvorenie `.env`
 
@@ -442,4 +444,45 @@ try {
     echo 'Chyba spojenia: ' . $e->getMessage();
 }
 EOF
+```
+
+### Laravel
+
+stiahnut repozitar do prazdnej zlozku `~/project` a premenovat na `server`
+
+```
+composer install
+npm install
+```
+
+nastavenie databazy v `.env`
+
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=database
+DB_USERNAME=username
+DB_PASSWORD=password
+```
+
+vytvorenie migracie v kontaineri
+
+```
+docker exec -it php_fpm php artisan migrate
+```
+
+nastavit opravnenia pre `~/public/server`
+
+```
+sudo chown -R $USER:www-data .
+find . -type f -exec chmod 664 {} \;
+find . -type d -exec chmod 775 {} \;
+sudo chgrp -R www-data ./storage ./bootstrap/cache
+sudo chmod -R ug+rwx ./storage ./bootstrap/cache
+```
+
+```
+docker exec -it php_fpm php artisan key:generate
+docker exec -it php_fpm php artisan storage:link
 ```
