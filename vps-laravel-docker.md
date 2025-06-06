@@ -1,6 +1,6 @@
 # VPS Laravel (docker)
 
-## vytvorenie
+### vytvorenie
 
 ```
 ssh root@<ip-servera>
@@ -16,7 +16,7 @@ reboot -f
 ssh <user>@<ip-servera>
 ```
 
-## instalovanie
+### instalovanie
 
 ```
 sudo apt install mc -y
@@ -40,25 +40,65 @@ sudo ufw enable
 sudo ufw status
 ```
 
-## DNS zaznamy
+### PHP
 
-Typ `A`
-
-```
-Host: example.com
-Typ: A
-Hodnota: <ip-servera>
-```
-
-Typ `CNAME`
+instalacia
 
 ```
-Host: *.example.com
-Typ: CNAME
-Hodnota: example.com
+sudo apt install php-fpm php-cli -y
 ```
 
-## docker
+### Composer
+
+instalacia
+
+```
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+
+sudo mv composer.phar /usr/local/bin/composer
+```
+
+### Node
+
+instalacia
+
+```
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+apt-get install nodejs -y
+```
+
+### Git
+
+instalacia
+
+```
+sudo apt install git
+git config --global user.name "<username>"
+git config --global user.email "<email>"
+```
+
+vytvorenie SSH kluca a pridanie do SSH agenta
+
+```
+ssh-keygen -t ed25519 -C "<mail@example.com>"
+eval $(ssh-agent -s)
+ssh-add ~/.ssh/id_ed25519
+```
+
+pridanie verejneho kluca na Github
+
+```
+cat ~/.ssh/id_ed25519.pub
+
+Settings
+SSH and GPG keys
+New SSH key
+```
+
+## Docker
 
 instalacia najnovsej verzie
 
@@ -86,6 +126,24 @@ sudo usermod -aG docker $USER
 newgrp
 groups $USER
 su - $USER
+```
+
+### DNS zaznamy
+
+Typ `A`
+
+```
+Host: example.com
+Typ: A
+Hodnota: <ip-servera>
+```
+
+Typ `CNAME`
+
+```
+Host: *.example.com
+Typ: CNAME
+Hodnota: example.com
 ```
 
 ## testovaci projekt
