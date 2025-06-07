@@ -293,6 +293,12 @@ server {
     location = /favicon.ico { access_log off; log_not_found off; }
     location = /robots.txt  { access_log off; log_not_found off; }
 
+    location /storage {
+        alias /var/www/html/storage/app/public;
+        access_log off;
+        try_files $uri $uri/ =404;
+    }
+
     error_page 404 /index.php;
 
     location ~ ^/index\.php(/|$) {
