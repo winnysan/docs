@@ -413,6 +413,8 @@ services:
     image: mysql:8.0
     container_name: mysql
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -485,4 +487,33 @@ sudo chmod -R ug+rwx ./storage ./bootstrap/cache
 ```
 docker exec -it php_fpm php artisan key:generate
 docker exec -it php_fpm php artisan storage:link
+```
+
+### pripojenie k databazi cez SSH tunel
+
+nahratie verejneho kluca na server
+
+```
+ssh-copy-id -i ~/.ssh/id_ed25519.pub <user>@<ip-servera>
+```
+
+otestovanie prihlasenia pomocou kluca
+
+```
+ssh -i ~/.ssh/id_ed25519 <user>@<ip-servera>
+```
+
+v `TablePlus` nastavit hodnoty z `docker .env` a pripojit `Over SSH`
+
+```
+User: username
+Password: password
+Database: database
+
+Over SSH
+Server: <ip-servera>
+Port: 22
+User: <user>
+Password: prazdne
+Use SSH key: ~/.ssh/id_25519
 ```
