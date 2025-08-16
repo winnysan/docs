@@ -12,6 +12,14 @@ brew update
 brew --version
 ```
 
+## Midnight Commander
+
+```
+brew install midnight-commander
+
+mc --version
+```
+
 ## Git
 
 ```
@@ -32,22 +40,6 @@ pbcopy < ~/.ssh/id_ed25519.pub
 cat ~/.ssh/id_ed25519.pub
 ```
 
-## Cocoapods
-
-```
-brew install cocoapods
-
-pod --version
-```
-
-## Midnight Commander
-
-```
-brew install midnight-commander
-
-mc --version
-```
-
 ## PHP, Composer, Laravel
 
 ```
@@ -59,6 +51,15 @@ composer --version
 laravel --version
 ```
 
+## Node
+
+```
+brew install node
+
+node --version
+npm --version
+```
+
 ## Mailpit
 
 ```
@@ -67,11 +68,19 @@ brew install mailpit
 mailpit version
 ```
 
-## Node
+# Meilisearch
 
 ```
-brew install node
+brew install meilisearch
 
-node --version
-npm --version
+meilisearch --version
+meilisearch --master-key=meilisearch-secret-key
+```
+
+## Cocoapods
+
+```
+brew install cocoapods
+
+pod --version
 ```
