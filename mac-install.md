@@ -1,238 +1,77 @@
 # Na MACu
 
-## Inštalácie Z INTERNETU
-
-```
-https://code.visualstudio.com
-https://www.mongodb.com/try/download/compass
-https://tableplus.com
-```
-
----
-
-## Inštalácie CEZ TERMINAL
-
-### inštalácia Homebrew
+## Homebrew
 
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
 echo >> /Users/<USER>/.zprofile
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/<USER>/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
+brew update
 
 brew --version
-
-brew update
 ```
 
-### inštalácia Git
+## Git
 
 ```
 brew install git
+git config --global user.name "<USERNAME>"
+git config --global user.email "<EMAIL>"
 
 git --version
-
-git config --global user.name "<USERNAME>"
-git config --global user.email "<USEREMAIL>"
 ```
 
-### SSH kľúč
+## SSH key
 
 ```
 ssh-keygen -t ed25519 -C "<EMAIL>"
-
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
-
 pbcopy < ~/.ssh/id_ed25519.pub
 cat ~/.ssh/id_ed25519.pub
 ```
 
-## inštalácia NODE
+## Cocoapods
+
+```
+brew install cocoapods
+
+pod --version
+```
+
+## Midnight Commander
+
+```
+brew install midnight-commander
+
+mc --version
+```
+
+## PHP, Composer, Laravel
+
+```
+/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.4)"
+source /Users/<USER>/.zprofile
+
+php --version
+composer --version
+laravel --version
+```
+
+## Mailpit
+
+```
+brew install mailpit
+
+mailpit version
+```
+
+## Node
 
 ```
 brew install node
 
 node --version
 npm --version
-```
-
-## inštalácia Yarn
-
-```
-brew install yarn
-
-yarn --version
-```
-
-### inštalácia MongoDB
-
-```
-brew tap mongodb/brew
-brew update
-
-brew install mongodb-community@8.0
-```
-
-### inštalácia Mailpit
-
-```
-brew install mailpit
-
-brew services start mailpit
-```
-
-### služba MongoDB
-
-```
-brew services start mongodb-community@8.0
-brew services stop mongodb-community@8.0
-
-brew services list
-```
-
----
-
-## Vývojové prostredie
-
-### inštalácia NGINX
-
-```
-brew install nginx
-```
-
-```
-sudo nano /opt/homebrew/etc/nginx/nginx.conf
-```
-
-```
-sudo nginx                   # spustenie
-sudo nginx -s reload         # reštart
-sudo nginx -s stop           # okamžité zastavenie
-sudo nginx -s quit           # umozní procesom dokončiť aktuálnej požiadavky
-sudo nginx -t                # kontrola konfiguracie
-
-ps aux | grep nginx         # kontrola spustených procesov
-sudo kill -9 <PID>          # vynútené zastavenie
-
-brew services start nginx   # spustenie služby
-brew services stop nginx    # zastavenie služby
-brew services list          # zobrazenie služieb
-
-sudo lsof -i :80        # kontrola portu
-sudo kill <PID>         # zastavenie
-```
-
-### nastavenie lokálnych domén
-
-nastaviť domény
-
-```
-sudo nano /etc/hosts
-
-127.0.0.1   local.com
-127.0.0.1   local.sk
-```
-
-### nastavenie HTTPS
-
-konfiguračný súbor `openssl-san.cnf` na generovanie certifikátov s podporou rozšírenia SAN - `Subject Alternative Name`
-
-```
-[req]
-default_bits       = 2048    # Nastavuje veľkosť RSA kľúča na 2048 bitov
-default_md         = sha256  # Používa SHA-256 ako hashovaciu funkciu na podpis certifikátu
-distinguished_name = dn      # Odkazuje na sekciu [dn], kde sú uvedené údaje o organizácii
-x509_extensions    = v3_req  # Odkazuje na sekciu [v3_req], ktorá definuje rozšírenia pre certifikát (vrátane SAN)
-prompt             = no      # Zabezpečuje, že OpenSSL nebude interaktívne pýtať údaje, ale použije hodnoty z konfigurácie
-
-[dn]
-C  = SK           # Krajina
-ST = Bratislava   # Štát/kraj
-L  = Bratislava   # Mesto
-O  = MyLocal      # Organizácia (napr. názov projektu)
-CN = mylocal.com  # Common Name (CN) – hlavná doména pre SSL certifikát
-
-[v3_req]
-subjectAltName = @alt_names  # Odkazuje na sekciu [alt_names], kde sú definované alternatívne domény
-
-[alt_names]
-DNS.1 = local.com
-DNS.2 = local.sk
-```
-
-vytvorenie samo-podpísaného certifikátu
-
-```
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout local.key \
-    -out local.crt \
-    -config openssl-san.cnf
-```
-
-pridať `local.crt` do `Kľúčenka` pre Systém a nastaviť `Vždy dôverovať`
-
-```
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain local.crt
-```
-
-popis: `-d -r trustRoot` nastaví ako doveryhodný certifikát pre všetky účty, uloží do systémovej kľúčenky
-
-overenie
-
-```
-security find-certificate -c "local.com" /Library/Keychains/System.keychain
-```
-
-vymazať DNS cache
-
-```
-sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
-```
-
-skopirovanie do `nginx`, nastavenie oprávnení (plný prístup pre len pre vlastníka, nastavenie vlastníka ako `root`, skupiny ako `wheel`, ktorá je predvolená pre administračné účely, čím sa zabezpečí že adresár je riadený len administrátorom systému)
-
-```
-sudo mkdir -p /opt/homebrew/etc/nginx/certs
-
-sudo chmod 700 /opt/homebrew/etc/nginx/certs
-sudo chown root:wheel /opt/homebrew/etc/nginx/certs
-
-sudo cp local.crt local.key /opt/homebrew/etc/nginx/certs
-```
-
-konfigurácia `nginx`
-
-```
-cp /opt/homebrew/etc/nginx/nginx.conf /opt/homebrew/etc/nginx/nginx.conf.backup
-
-sudo nano /opt/homebrew/etc/nginx/nginx.conf
-```
-
-```
-http {
-    server {
-        listen 443 ssl;
-        server_name local.com local.sk;
-
-        ssl_certificate /opt/homebrew/etc/nginx/certs/local.crt;
-        ssl_certificate_key /opt/homebrew/etc/nginx/certs/local.key;
-
-        location / {
-            proxy_pass http://127.0.0.1:3000;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-
-    server {
-        listen 80;
-        server_name local.com local.sk;
-
-        return 301 https://$host$request_uri;
-    }
-}
 ```
