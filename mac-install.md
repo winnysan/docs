@@ -116,12 +116,40 @@ brew install --cask android-studio
 `~/Library/Android/sdk` - SKD \
 `~/.android/avd` - emulátory
 
-vymazanie cache
+vymazanie
 
 ```
+rm -rf ~/Library/Android/sdk
+rm -rf ~/.android/avd
 rm -rf ~/.gradle/caches/
 rm -rf ~/.gradle/build-cache/
 rm -rf ~/Library/Caches/AndroidStudio*
+```
+
+### Xcode
+
+inštaluje sa cez `App Store`
+
+```
+https://apps.apple.com/sk/app/xcode/id497799835
+```
+
+`~/Library/Developer/CoreSimulator/Devices/` - simulátory \
+`~/Library/Developer/Xcode/DerivedData/` - buildy \
+`~/Library/Developer/Xcode/Archives/` - archivované buildy \
+`~/Library/Developer/Xcode/iOS DeviceSupport/` - debug support \
+`~/Library/Developer/Shared/Documentation/DocSets/` - uložená dokumentácia \
+`~/Library/Caches/com.apple.dt.Xcode/` - Xcode cache
+
+vymazanie
+
+```
+rm -rf ~/Library/Developer/CoreSimulator/Devices/*
+rm -rf ~/Library/Developer/Xcode/DerivedData/*
+rm -rf ~/Library/Developer/Xcode/Archives/*
+rm -rf ~/Library/Developer/Xcode/iOS\ DeviceSupport/*
+rm -rf ~/Library/Developer/Shared/Documentation/DocSets/*
+rm -rf ~/Library/Caches/com.apple.dt.Xcode/*
 ```
 
 ---
@@ -133,7 +161,7 @@ rm -rf ~/Library/Caches/AndroidStudio*
 `du -h -d 5 -t 1M ~` – vypíše priečinky do hĺbky 5, väčšie než 1 MB \
 `sort -hr` – zoradí od najväčšieho \
 `head -20 ` – výsledok len pre 20 záznamov \
-`awk` – pridá farbu podľa veľkosti \
+`awk` – pridá farbu podľa veľkosti
 
 ```
 du -h -d 5 -t 1M ~ | sort -hr | head -20 | \
