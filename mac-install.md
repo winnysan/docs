@@ -14,6 +14,26 @@ brew update
 brew --version
 ```
 
+nájdenie balíku
+
+```
+brew search <nazov-baliku>
+```
+
+nainštalované balíky
+
+```
+brew list
+brew list --cask
+```
+
+odinštalovanie balíku
+
+```
+brew uninstall <nazov-baliku>
+brew uninstall --cask <nazov-baliku>
+```
+
 ### Midnight Commander
 
 ```
@@ -87,14 +107,33 @@ brew install cocoapods
 pod --version
 ```
 
+### Android Studio
+
+```
+brew install --cask android-studio
+```
+
+`~/Library/Android/sdk` - SKD \
+`~/.android/avd` - emulátory
+
+vymazanie cache
+
+```
+rm -rf ~/.gradle/caches/
+rm -rf ~/.gradle/build-cache/
+rm -rf ~/Library/Caches/AndroidStudio*
+```
+
+---
+
 ## Nástroje
 
 ### Zobrazenie veľkých adresárov
 
-`du -h -d 5 -t 1M ~` – vypíše priečinky do hĺbky 5, väčšie než 1 MB
-`sort -hr` – zoradí od najväčšieho
-`head -20 ` – výsledok len pre 20 záznamov
-`awk` – pridá farbu podľa veľkosti
+`du -h -d 5 -t 1M ~` – vypíše priečinky do hĺbky 5, väčšie než 1 MB \
+`sort -hr` – zoradí od najväčšieho \
+`head -20 ` – výsledok len pre 20 záznamov \
+`awk` – pridá farbu podľa veľkosti \
 
 ```
 du -h -d 5 -t 1M ~ | sort -hr | head -20 | \
