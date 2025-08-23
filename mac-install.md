@@ -2,6 +2,14 @@
 
 ## Inštalácie
 
+### Vscode
+
+```
+https://code.visualstudio.com/download
+```
+
+pridanie do PATH cez Command Palette príkazom `Install 'code' command in PATH`
+
 ### Homebrew
 
 ```
