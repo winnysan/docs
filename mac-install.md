@@ -115,6 +115,40 @@ brew install cocoapods
 pod --version
 ```
 
+### Watchman
+
+```
+brew install watchman
+
+node --version
+npm --version
+```
+
+
+### Java Development Kit
+
+```
+brew install --cask zulu@17
+
+brew info --cask zulu@17
+
+open /opt/homebrew/Caskroom/zulu@17/<version number>
+```
+
+inštaluje sa cez `Double-Click to Install Azul Zulu JDK 17.pkg`
+
+pridať do terminálu
+
+```
+open ~/.zshrc
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home # vložiť do `.zshrc`
+
+source ~/.zshrc
+
+java -version
+```
+
 ### Android Studio
 
 ```
