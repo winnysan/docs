@@ -191,6 +191,14 @@ inštaluje sa cez `App Store`
 https://apps.apple.com/sk/app/xcode/id497799835
 ```
 
+nastavenie Xcode ako aktívny developer directory:
+
+```
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+xcode-select -p
+sudo xcodebuild -license # potvrdit agree
+```
+
 `~/Library/Developer/CoreSimulator/Devices/` - simulátory \
 `~/Library/Developer/Xcode/DerivedData/` - buildy \
 `~/Library/Developer/Xcode/Archives/` - archivované buildy \
