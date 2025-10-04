@@ -158,6 +158,21 @@ brew install --cask android-studio
 `~/Library/Android/sdk` - SKD \
 `~/.android/avd` - emulátory
 
+pridať do terminálu
+
+```
+open ~/.zshrc
+
+export ANDROID_HOME=$HOME/Library/Android/sdk # vložiť do `.zshrc`
+export PATH=$PATH:$ANDROID_HOME/emulator # vložiť do `.zshrc`
+export PATH=$PATH:$ANDROID_HOME/platform-tools # vložiť do `.zshrc`
+
+source ~/.zshrc
+
+echo $ANDROID_HOME
+echo $PATH
+```
+
 vymazanie
 
 ```
